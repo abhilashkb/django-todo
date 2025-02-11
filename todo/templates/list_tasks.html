@@ -2,21 +2,131 @@
 <html>
 <head>
     <title>To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .task-title {
+            flex-grow: 1;
+        }
+        .status {
+            margin-left: 10px;
+        }
+        .add-task {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .add-task:hover {
+            background-color: #218838;
+        }
+        .date-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .calendar-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .auth-links {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>To-Do List</h1>
-    <ul>
-        {% for task in tasks %}
-            <li>
-                <strong>{{ task.title }}</strong>
-                {% if task.completed %}
-                    <span style="color: green;">(Completed)</span>
-                {% else %}
-                    <span style="color: red;">(Pending)</span>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'add_task' %}">Add Task</a>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="auth-links">
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </div>
+        <div class="date-container">
+            <p id="current-date"></p>
+        </div>
+        <div class="calendar-container">
+            <input type="date" id="calendar" value="{{ selected_date }}" onchange="filterTasksByDate()">
+        </div>
+        <ul>
+            {% for task_date in tasks %}
+                <li>
+                    <form method="post" action="{% url 'toggle_task_status' task_date.id %}">
+                        {% csrf_token %}
+                        <input type="checkbox" name="completed" onchange="this.form.submit()" {% if task_date.completed %}checked{% endif %}>
+                        <span class="task-title"><strong>{{ task_date.task.title }}</strong></span>
+                        {% if task_date.completed %}
+                            <span class="status" style="color: green;">(Completed)</span>
+                        {% else %}
+                            <span class="status" style="color: red;">(Pending)</span>
+                        {% endif %}
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <a class="add-task" href="{% url 'create_task' %}">Add Task</a>
+    </div>
+    <script>
+        // Display the current date
+        const currentDateElement = document.getElementById('current-date');
+        const currentDate = new Date();
+        currentDateElement.textContent = currentDate.toDateString();
+
+        // Filter tasks by selected date
+        function filterTasksByDate() {
+            const selectedDate = document.getElementById('calendar').value;
+            window.location.href = `?date=${selectedDate}`;
+        }
+    </script>
 </body>
 </html>
