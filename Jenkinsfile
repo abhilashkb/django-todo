@@ -23,7 +23,7 @@ pipeline {
                 script {
                     env.commitId = getVersion()
                     env.imageName = "${env.DOCKERHUB_REPO}:${commitId}"
-                    sh "docker build -t ${imageName} ."
+                    sh "docker build . -t ${imageName}"
                 }
             }
         }
