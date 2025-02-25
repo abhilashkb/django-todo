@@ -27,6 +27,7 @@ def list_tasks(request):
     task_dates = TaskDate.objects.filter(task__user=request.user, date=selected_date)
     return render(request, 'list_tasks.html', {'tasks': task_dates, 'selected_date': selected_date})
 
+@login_required
 def create_task(request):
     """
     A view to create a new task.
@@ -36,7 +37,7 @@ def create_task(request):
     """
     if request.method == 'POST':
         title = request.POST.get('title')
-        Task.objects.create(title=title)
+        Task.objects.create(title=title, user=request.user)
     return render(request, 'create_task.html')
 
 
