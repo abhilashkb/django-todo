@@ -1,0 +1,29 @@
+# Ignore Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+# Ignore virtual environment directories
+venv/
+env/
+myenv/
+
+# Ignore Docker files
+docker-compose.override.yml
+docker-compose.override.yml
+.dockerignore
+
+# Ignore Jenkins workspace and logs
+workspace/
+*.log
+
+# Ignore Kubernetes config files
+kubernetes/*.yaml
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
