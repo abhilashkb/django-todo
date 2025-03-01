@@ -39,7 +39,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                     sh 'sed -i "s|tagname|$DOCK_TAG|" kubernetes/django-deployment.yaml'
+                     sh 'sed -i "s|tagname|${commitId}|" kubernetes/django-deployment.yaml'
                     // Write the kubeconfig to a temporary file
                     withCredentials([file(credentialsId: 'my-k8s-config', variable: 'SECRET_FILE')]) {
                       withEnv(["KUBECONFIG=${SECRET_FILE}"]) {
