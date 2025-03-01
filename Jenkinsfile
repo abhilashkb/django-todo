@@ -1,7 +1,7 @@
 
 def getVersion(){
  commitid = sh returnStdout: true, script: '''git rev-parse HEAD'''
- return commitid
+ return commitid.trim()
 }
 pipeline {
     agent any
@@ -36,7 +36,25 @@ pipeline {
                 }
             }
         }
-    }
+        stage('Deploy') {
+            steps {
+                script {
+                     sh 'sed -i "s|tagname|$DOCK_TAG|" kubernetes/django-deployment.yaml'
+                    // Write the kubeconfig to a temporary file
+                    withCredentials([file(credentialsId: 'my-k8s-config', variable: 'SECRET_FILE')]) {
+                      withEnv(["KUBECONFIG=${SECRET_FILE}"]) {
+                        // Run kubectl commands
+                        sh 'kubectl get pods'
+                        sh 'kubectl apply -f kubernetes/db-pvc.yaml'
+                        sh 'kubectl apply -f kubernetes/django-deployment.yaml'
+                        sh 'kubectl apply -f kubernetes/django-service.yaml'
+                        sh 'kubectl apply -f kubernetes/django-ingress.yaml'                    
+                
+                      }
+                        }
+                      } 
+        } 
+       }
 
     post {
         always {
