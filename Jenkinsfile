@@ -48,7 +48,7 @@ pipeline {
                         sh 'kubectl apply -f kubernetes/db-pvc.yaml'
                         sh 'kubectl apply -f kubernetes/django-deployment.yaml'
                         sh 'kubectl apply -f kubernetes/django-service.yaml'
-                        sh 'kubectl apply -f kubernetes/django-ingress.yaml'                    
+                     //   sh 'kubectl apply -f kubernetes/django-ingress.yaml'                    
                 
                       }
                         }
